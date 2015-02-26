@@ -7,7 +7,7 @@ gem 'rails-api'
 
 gem 'spring', :group => :development
 
-
+gem 'responders', '~> 2.0'
 
 
 # To use ActiveModel has_secure_password
