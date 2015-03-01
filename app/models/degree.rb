@@ -1,27 +1,36 @@
 class Degree
-  class UnspecifiedType < StandardError; end
+  class UnspecifiedInputType < StandardError; end
+  class UnspecifiedOutputType < StandardError; end
+
+  CONVERSIONS = { 
+    celsius: { 
+      celsius: lambda { |x| x },
+      kelvin: lambda { |x| x - 273.15 },
+      farenheit: lambda { |x| x * 9.0/5 + 32 }
+    },
+    kelvin: {
+      celsius: lambda { |x| x + 273.15 },
+      kelvin: lambda { |x| x },
+      farenheit: lambda { |x| x * 9.0/5 - 459.67 }
+    },
+    farenheit: {
+      celsius: lambda { |x| (x - 32) * 5.0/9 },
+      kelvin: lambda { |x| (x + 459.67) * 5.0/9 },
+      farenheit: lambda { |x| x }
+    }
+  }
 
   attr_reader :value, :type
 
-  ALLOWED_TYPES = [:celsium, :farengheit]
-
   def initialize value, type
-    raise UnspecifiedType unless type.is_a?(Symbol) and ALLOWED_TYPES.include?(type)
+    raise UnspecifiedInputType unless CONVERSIONS.include?(type)
     @value = value.to_f
     @type = type
   end
 
-  def to_farengheit
-    case type
-      when :celsium then (value * 9.0/5 + 32)
-      when :farengheit then (value)
-    end
+  def convert_to output_type
+    raise UnspecifiedOutputType unless CONVERSIONS.include?(output_type)
+    CONVERSIONS[type][output_type].call(value)
   end
 
-  def to_celsium
-    case type
-      when :celsium then (value)
-      when :farengheit then ((value - 32) * 5.0/9)
-    end
-  end
 end

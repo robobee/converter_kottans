@@ -1,28 +1,28 @@
 module Convert
   class ProcessController < BaseController
 
-    rescue_from Degree::UnspecifiedType do
+    rescue_from Degree::UnspecifiedInputType do
       respond_to do |format|
-        format.json { render json: {error: 'Wrong degree type passed'} }
+        format.json { render json: {error: 'Wrong input degree type passed'} }
       end
     end
 
-    def c2f
+    rescue_from Degree::UnspecifiedOutputType do
       respond_to do |format|
-        format.json { render json: {value: degree_model(:celsium).to_farengheit } }
+        format.json { render json: {error: 'Wrong output degree type passed'} }
       end
     end
 
-    def f2c
+    def convert
       respond_to do |format|
-        format.json { render json: {value: degree_model(:farengheit).to_celsium } }
+        format.json { render json: {value: degree_model(params[:from]).convert_to(params[:to].to_sym) } }
       end
     end
 
     private
 
     def degree_model type
-      ::Degree.new(params[:value].to_f, type)
+      ::Degree.new(params[:value].to_f, type.to_sym)
     end
   end
 end

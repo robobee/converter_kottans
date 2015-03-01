@@ -1,7 +1,7 @@
 class Convert::BaseController < ::ApplicationController
   include ActionController::MimeResponds
 
-  before_filter :check_params, only: [:c2f, :f2c]
+  before_filter :check_params, only: [:convert]
 
   def check_params
     respond_to do |format|
